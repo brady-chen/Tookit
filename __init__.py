@@ -4,6 +4,9 @@
 # @File    : __init__.py
 # @Software: PyCharm
 # @Contact : bradychen1024@gmail.com
+# @Introduction : 一些常用功能与重复代码的封装
+
+__version__ = '0.0.1'
 
 from functools import wraps
 

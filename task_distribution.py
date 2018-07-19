@@ -92,8 +92,6 @@ class TaskDistribution:
         local_name = socket.getfqdn(socket.gethostname())
         ip = socket.gethostbyname(local_name)
         # print myname, ip, self.host
-        # ip = '58.221.49.26'
-        # ip = '192.168.253.1'
         if ip == self.host:
             self.start_master()
         else:

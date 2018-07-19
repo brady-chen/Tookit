@@ -37,7 +37,10 @@ class TaskDistribution:
         """
         self.host = host
         self.func = func
-        self.manager = BaseManager(address=(host, port), authkey=authkey)
+        try:
+            self.manager = BaseManager(address=(host, port), authkey=authkey)
+        except TypeError:
+            self.manager = BaseManager(address=(host, port), authkey=authkey.encode('utf-8'))
         BaseManager.register('get_task_queue', callable=return_task_queue)
         BaseManager.register('get_result_queue', callable=return_result_queue)
 
@@ -92,8 +95,6 @@ class TaskDistribution:
         local_name = socket.getfqdn(socket.gethostname())
         ip = socket.gethostbyname(local_name)
         # print myname, ip, self.host
-        # ip = '58.221.49.26'
-        # ip = '192.168.253.1'
         if ip == self.host:
             self.start_master()
         else:
@@ -102,3 +103,4 @@ class TaskDistribution:
 
 if __name__ == '__main__':
     t = TaskDistribution('localhost', 8180, 'brady', lambda a: print(a))
+    t.start()

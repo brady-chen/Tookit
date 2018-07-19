@@ -1,0 +1,8 @@
+beautifulsoup4==4.6.0
+bs4==0.0.1
+fake-useragent==0.1.10
+lxml==4.2.1
+pymongo==3.6.1
+pymssql==2.2.0.dev0
+requests==2.13.0
+requests-html==0.8.0

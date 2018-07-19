@@ -6,11 +6,93 @@
 # @Contact : bradychen1024@gmail.com
 # @Introduction : 一些常用功能与重复代码的封装
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
+import pymssql
 import time
+import traceback
+
 from functools import wraps
 from urllib.parse import unquote
+
+
+class SqlServer(object):
+    """
+    SqlServer工具类
+    """
+
+    def __init__(self, host, user, pwd, db):
+        self.host = host
+        self.user = user
+        self.pwd = pwd
+        self.db = db
+
+    def get_connect(self):
+        if not self.db:
+            raise (NameError, '没有设置数据库信息')
+        conn = pymssql.connect(host=self.host, user=self.user, password=self.pwd, database=self.db, charset='utf8')
+        if conn.cursor():
+            return conn
+        else:
+            raise (NameError, '连接数据库失败')
+
+    def exec_query(self, sql):
+        """
+        :param sql:查询sql
+        :return: 查询操作
+        """
+        conn = self.get_connect()
+        cur = conn.cursor()
+        cur.execute(sql)
+        res_list = cur.fetchall()
+
+        # 单线程查询完毕后必须关闭连接
+        conn.close()
+        return res_list
+
+    def exec_non_query(self, sql):
+        """
+        单次增删改操作，适用于某些不想多次操作的场景
+        :param sql: 非查询sql
+        :return: 操作结果
+        """
+        conn = self.get_connect()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql)
+            conn.commit()
+            return True
+        except Exception:
+            print(sql)
+            print('提交sql失败')
+            print(traceback.format_exc())
+            return False
+        finally:
+            conn.close()
+
+    def exec_safety_non_query(self, sql):
+        """
+        安全的非查询操作
+        :param sql: 非查询sql
+        :return: 操作结果
+        """
+        try:
+            conn = self.get_connect()
+            cur = conn.cursor()
+            cur.execute(sql)
+            conn.commit()
+            return True
+        except Exception as e:
+            try:
+                print(sql)
+                print("提交sql失败，重新提交中...")
+                cur.execute(sql)
+                conn.commit()
+                return True
+            except Exception as e:
+                print('提交sql失败，报错原因为%s,请检查sql代码' % e)
+                print(traceback.format_exc())
+                return False
 
 
 def convert_parameter(new_params=None):

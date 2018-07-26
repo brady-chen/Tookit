@@ -239,7 +239,7 @@ class Consoler(object):
         self.parser.add_argument(
             "--port", type=int, help="console port. ", default=8080)
         self.parser.add_argument(
-            "--debug",help="console debug. ", type=bool, default=True)
+            "--debug", help="console debug. ", type=bool, default=True)
 
     def parse_args(self):
         # 此函数必须存在于需要远程调试的项目文件中，并将以下代码复制到项目文件中

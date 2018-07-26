@@ -6,7 +6,7 @@
 # @Contact : bradychen1024@gmail.com
 # @Introduction : 一些常用功能与重复代码的封装
 
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 import pymssql
 import time
@@ -93,6 +93,27 @@ class SqlServer(object):
                 print('提交sql失败，报错原因为%s,请检查sql代码' % e)
                 print(traceback.format_exc())
                 return False
+
+
+class Timer(object):
+    """
+    计时器，对于需要计时的代码进行with操作：
+    with Timer() as timer:
+        ...
+        ...
+    print(timer.cost)
+    ...
+    """
+    def __init__(self, start=None):
+        self.start = start if start is not None else time.time()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.stop = time.time()
+        self.cost = self.stop - self.start
+        return exc_type is None
 
 
 def convert_parameter(new_params=None):
